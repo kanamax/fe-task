@@ -54,6 +54,7 @@ export default function SearchBar(props) {
             placeholder="Search attributes, customers and more"
             fullWidth
             type="text"
+            value={searchString}
             helperText="Keep empty to get all customers or use HTTP search string (e.g. offset=5&limit=7) or customer ID"
             onChange={(e) => saveToStore(e.target.value)}
             onKeyPress={(e) => saveToStore(e.target.value)}
