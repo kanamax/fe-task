@@ -1,0 +1,5 @@
+export const SAVE_TO_STORE = 'SAVE_TO_STORE';
+export const GET_SEARCH_RESULTS = 'GET_SEARCH_RESULTS';
+export const GET_EVENT_DETAILS = 'GET_EVENT_DETAILS';
+export const TOGGLE_GROUP = 'TOGGLE_GROUP';
+export const CHANGE_PAGE = 'CHANGE_PAGE';
