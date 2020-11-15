@@ -52,7 +52,7 @@ const useStyles = makeStyles({
 });
 
 export default function TimeLineDay(props) {
-  const { dayData, eventData, date, toggleGroup, groupStatus, last } = props;
+  const { dayData, eventData, date, toggleGroup, groupStatus, last, first, single } = props;
   const classes = useStyles();
   let visibility = '';
   if (eventData.length === 1 ) {
@@ -60,9 +60,11 @@ export default function TimeLineDay(props) {
   }
 
   const timelineWidgets = dayData.map((item) => (
-    <Grid item container key={`wigdet${item.id}`}>
-      <TimelineWidget widgetData={item} date={date} />
-    </Grid>
+    item.count !== 0 ?  (
+      <Grid item container key={`wigdet${item.id}`}>
+        <TimelineWidget widgetData={item} date={date} />
+      </Grid>
+    ) : null
   ));
 
   const eventList = eventData.map((item, i) => (
@@ -70,7 +72,7 @@ export default function TimeLineDay(props) {
       <Grid container justify="center" key={`event${item.id}`} className={classes.cardGrid}>
         <TimelineEvent eventData={item}  />
       </Grid>
-      { !last || ( last && i !== eventData.length - 1 && groupStatus ) ? <TimelineConnector /> : null}
+      { !last || ( last && i !== eventData.length - 1 && groupStatus && !single ) ? <TimelineConnector /> : null}
     </div>
     
   ));
@@ -104,7 +106,8 @@ export default function TimeLineDay(props) {
           </Grid>
         </Card>
       </Grid>
-      {!last || (last && groupStatus ) ? <TimelineConnector /> : null}
+      {(first && visibility === 'Hidden') || (single ) || (last && groupStatus === false) ?
+        null :  <TimelineConnector /> }
       <Collapse in={groupStatus}>
         {eventList}
       </Collapse>
@@ -118,6 +121,7 @@ TimeLineDay.propTypes = {
   toggleGroup: PropTypes.func.isRequired,
   groupStatus: PropTypes.bool.isRequired,
   date: PropTypes.string.isRequired,
-  last: PropTypes.bool.isRequired
+  last: PropTypes.bool.isRequired,
+  first: PropTypes.bool.isRequired,
+  single: PropTypes.bool.isRequired
 }
-

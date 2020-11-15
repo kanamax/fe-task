@@ -7,21 +7,12 @@ import TimelineDay from './timelineDay';
 const useStyles = makeStyles({
   root: {
     paddingTop: '2rem'
-  },
-  connector: {
-    borderLeft: '6px solid green',
-    height:'5rem',
-    left: '50%',
-    marginLeft: '-3px',
-    top:'0'
   }
 });
 
 export default function CustomerTimeline(props) {
   const classes = useStyles();
-  const { customerDetails, groupStatus, toggleGroup} = props;
-  const { eventCountByCategoryDay, timelineDates, eventsByDate } = customerDetails;
-
+  const { eventCountByCategoryDay, groupStatus, toggleGroup, timelineDates, eventsByDate } = props;
 
   const timelineDays = timelineDates.map((item, i) => (
     <TimelineDay 
@@ -32,6 +23,8 @@ export default function CustomerTimeline(props) {
       date={item} 
       key={`daycard${item}`}
       last={i+1 === timelineDates.length}
+      first={i === 0}
+      single={timelineDates.length===1}
     />
   ));
 
@@ -43,7 +36,9 @@ export default function CustomerTimeline(props) {
 }
 
 CustomerTimeline.propTypes = {
-  customerDetails: PropTypes.object.isRequired,
+  eventCountByCategoryDay: PropTypes.object.isRequired,
+  eventsByDate: PropTypes.object.isRequired,
   toggleGroup: PropTypes.func.isRequired,
-  groupStatus: PropTypes.object.isRequired
+  groupStatus: PropTypes.object.isRequired,
+  timelineDates: PropTypes.array.isRequired
 }

@@ -1,7 +1,6 @@
-/* eslint-disable camelcase */
 function getSearchResultsReducer(data, state) {
-  const { customers, selection_settings } = data;
-  const newState = { ...state, customers, lastSearch: selection_settings, page: 1 };
+  const { isError } = data;
+  const newState = { ...state, ...data, fetchingData: false, upTo: 5, dialogOpen: isError };
   return newState;
 }
 

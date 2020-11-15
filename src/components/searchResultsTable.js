@@ -1,110 +1,118 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
-import { Paper, Grid } from '@material-ui/core';
-import { DataGrid } from '@material-ui/data-grid';
+import { withStyles } from '@material-ui/core/styles';
+import { 
+  Paper,
+  Grid,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Button  
+} from '@material-ui/core';
 import { Link } from "react-router-dom";
 import IconButton from '@material-ui/core/IconButton';
 import SvgIcon from '@material-ui/core/SvgIcon';
-import avatarBank from '../../assets/avatarBank';
 
-const useStyles = makeStyles({
+const styles = {
   myPaper: {
-    marginTop: '2rem',
     backgroundColor: 'rgb(245, 245, 245)',
     borderRadius: '8px',
-    minHeight: '25rem'
+    boxSizing: 'border-box'
   },
-  searchLabel: {
-    fontSize: '1.5rem',
-    fontStyle: 'bold'
+  myButton: {
+    border: '1px solid rgb(163, 163, 163)',
+    borderRadius: '0.5rem',
+    fontWeight: '700',
+    color: 'rgb(163, 163, 163)'
   },
-  iconRoot: {
-    borderRadius:'1rem',
-    backgroundColor: 'rgb(245, 165, 24)',
-    width: '3.2rem',
-    height: '3.2rem',
-    color: 'rgb(171, 91, 12)'
-  },
-  inputRoot: {
-    paddingRight: '0.2rem'
+  invisible: {
+    display: 'none'
   },
   avatar: {
     width: '2rem'
   },
-  nameTag: {
-    fontWeight: '700',
-    paddingLeft: '0.5rem'
+  blackColor: {
+    fontWeight: '700'
   },
-  arrow: {
-    fontSize: '2rem',
-    paddingRight: '1rem'
+  greyColor: {
+    fontWeight: '500',
+    color: 'rgb(163, 163, 163)'
+  },
+  greyColorBolded: {
+    fontWeight: '700',
+    color: 'rgb(163, 163, 163)'
   }
-});
-
-function getFullName(params) {
-  return `${params.getValue('name') || ''} ${
-    params.getValue('surname') || ''
-  }`;
 }
 
-function dateToString(params) {
-  return new Date(params.getValue('created')).toLocaleString();
-}
+class SearchResultsTable extends React.Component{
 
-export default function SearchResultsTable(props) {
-  const classes = useStyles();
-  const { customers, getEventDetails, page, changePage } = props;
-  const customersWavatar = customers.map((item,i) => {
-    const customerWavatar = { ... item, avatar:avatarBank[i] }
-    return customerWavatar;
-  })
+  render() {
+    const { customers, showMoreData, classes, upTo } = this.props;
+    const displayData = customers.slice(0, Math.min(upTo, customers.length))
 
-  const columns = [
-    { field: 'fullName', 
-      headerName: 'Full name',
-      width: 240,
-      renderCell: (params) => (
-        <Grid container>
-          <img
-            alt="customer_avatar"
-            className={classes.avatar}
-            src={params.getValue('avatar')}
-          />
-          <Grid item className={classes.nameTag}>{getFullName(params)}</Grid>
-        </Grid>
-      )
-    },
-    { field: 'name', headerName: 'First name', width: 140 },
-    { field: 'surname', headerName: 'Last name', width: 140 },
-    { field: 'created', headerName: 'Created', width: 250, valueGetter: dateToString},
-    { field: 'id', headerName: 'ID', width: 300 },
-    { field: 'link', headerName: '  ', width: 100, renderCell: (params) => (
-      <Link to="/details">
-        <IconButton onClick={() => getEventDetails({id: params.getValue('id'), fullName: getFullName(params) })}>
-          <SvgIcon>
-            <path d="M5.5,4.14L4.5,5.86L15,12L4.5,18.14L5.5,19.86L19,12L5.5,4.14Z" />
-          </SvgIcon>
-        </IconButton>
-      </Link>
-    ) }
-  ]
-  return (
-    <Paper className={classes.myPaper}>
-      <DataGrid 
-        rows={customersWavatar}
-        columns={columns}
-        pageSize={5}
-        page={page}
-        onPageChange={(params) => {changePage(params.page)}}
-      />
-    </Paper>
-  );
+    return (
+      <TableContainer component={Paper} className={classes.myPaper}>
+        <Table className={classes.table}>
+          <TableHead>
+            <TableRow>
+              <TableCell />
+              <TableCell className={classes.blackColor}>CUSTOMER ID</TableCell>
+              <TableCell className={classes.greyColorBolded}>NAME</TableCell>
+              <TableCell className={classes.greyColorBolded}>SURNAME</TableCell>
+              <TableCell className={classes.greyColorBolded}>CREATED</TableCell>
+              <TableCell />
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {displayData.map((row, i) => (
+              <TableRow key={row.id}>
+                <TableCell align="right">
+                  <img
+                    alt="customer_avatar"
+                    className={classes.avatar}
+                    src={`../../assets/customer_avatars/Avatar-${i}.svg`}
+                  />
+                </TableCell>
+                <TableCell className={classes.blackColor}>{`Customer ${row.id}`}</TableCell>
+                <TableCell className={classes.greyColor}>{row.name}</TableCell>
+                <TableCell className={classes.greyColor}>{row.surname}</TableCell>
+                <TableCell className={classes.greyColor}>{new Date(row.created).toLocaleString()}</TableCell>
+                <TableCell align="right" className={classes.greyColor}>
+                  <Link to={`/details/${row.id}`}>
+                    <IconButton>
+                      <SvgIcon>
+                        <path d="M5.5,4.14L4.5,5.86L15,12L4.5,18.14L5.5,19.86L19,12L5.5,4.14Z" />
+                      </SvgIcon>
+                    </IconButton>
+                  </Link>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+          <caption align="center">
+            <Grid container justify="center">
+              <Button
+                className={customers.length !== displayData.length ? classes.myButton : classes.invisible}
+                onClick={() => showMoreData({ upTo, total: customers.length })}
+              >
+                SHOW MORE
+              </Button>
+            </Grid>
+          </caption>
+        </Table>
+      </TableContainer>
+    );
+  }
 }
 
 SearchResultsTable.propTypes = {
   customers: PropTypes.array.isRequired,
-  getEventDetails: PropTypes.func.isRequired,
-  changePage: PropTypes.func.isRequired,
-  page: PropTypes.number.isRequired
+  showMoreData: PropTypes.func.isRequired,
+  upTo: PropTypes.number.isRequired,
+  classes: PropTypes.object.isRequired
 }
+
+export default withStyles(styles)(SearchResultsTable);

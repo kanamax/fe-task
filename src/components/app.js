@@ -10,16 +10,16 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { Container } from '@material-ui/core';
 import * as ActionCreators from '../actions/actioncreators';
-import SearchBar from './searchBar';
-import SearchResultsTable from './searchResultsTable';
+import Search from './search';
 import CustomerDetails from './customerDetails';
+import LoadingIndicator from './loadingIndicator';
 
 class App extends React.Component {
   render(){
-    const { getSearchResults, getEventDetails, toggleGroup, changePage, saveToStore, state } = this.props;
-    const { customers, customerDetails, groupStatus, page, searchString } = state;
+    const { getSearchResults, saveToStore, showMoreData, state, closeDialog } = this.props;
+    const { customers, searchString, fetchingData, upTo, isError, errorMessage, dialogOpen } = state;
     return (
-      <Container style={{paddingTop: '2rem'}}>
+      <Container style={{ paddingTop: '2rem' }}>
         <Switch>
           <Route 
             exact
@@ -35,40 +35,34 @@ class App extends React.Component {
             path="/search"
             render={() => {
               return (
-                <div>
-                  <SearchBar 
-                    getSearchResults={getSearchResults} 
-                    saveToStore={saveToStore}
-                    searchString={searchString} 
-                  />
-                  { customers.length > 0 ? (
-                    <SearchResultsTable 
-                      customers={customers} 
-                      getEventDetails={getEventDetails}
-                      changePage={changePage}
-                      page={page}
-                    />
-                  ) : null}
-                </div> 
+                <Search 
+                  getSearchResults={getSearchResults}
+                  saveToStore={saveToStore}
+                  searchString={searchString}
+                  customers={customers} 
+                  showMoreData={showMoreData}
+                  fetchingData={fetchingData}
+                  isError={isError}
+                  errorMessage={errorMessage}
+                  closeDialog={closeDialog}
+                  dialogOpen={dialogOpen}
+                  upTo={upTo}
+                />
               )
             }}
           />
           <Route 
-            exact
-            path="/details"
+            path="/details/:id"
             render={() => {
               return (
                 <div>
-                  <CustomerDetails 
-                    customerDetails={customerDetails} 
-                    toggleGroup={toggleGroup} 
-                    groupStatus={groupStatus} 
-                  />
+                  <CustomerDetails />
                 </div> 
               )
             }}
           />
         </Switch>
+        <LoadingIndicator show={fetchingData} />
       </Container>
     );
   }
@@ -84,10 +78,9 @@ function mapActionCreatorsToProps(dispatch) {
 
 App.propTypes = {
   getSearchResults: PropTypes.func.isRequired,
+  showMoreData: PropTypes.func.isRequired,
   saveToStore: PropTypes.func.isRequired,
-  getEventDetails: PropTypes.func.isRequired,
-  changePage: PropTypes.func.isRequired,
-  toggleGroup: PropTypes.func.isRequired,
+  closeDialog: PropTypes.func.isRequired,
   state: PropTypes.object.isRequired
 };
 

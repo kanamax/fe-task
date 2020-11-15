@@ -3,30 +3,19 @@ import thunk from 'redux-thunk';
 import { createLogger } from 'redux-logger';
 import * as ATYPES from '../actions/actiontypes';
 import getSearchResultsReducer from './partialreducers/getSearchResultsReducer';
-import getEventDetailsReducer from './partialreducers/getEventDetailsReducer';
-import toggleGroupReducer from './partialreducers/toggleGroupReducer';
-import changePageReducer from './partialreducers/changePageReducer';
+import showMoreDataReducer from './partialreducers/showMoreDataReducer';
 import saveToStoreReducer from './partialreducers/saveToStoreReducer';
+import updateFetchingStatusReducer from './partialreducers/updateFetchingStatusReducer';
+import closeDialogReducer from './partialreducers/closeDialogReducer';
 
 const initState = {
   searchString: '',
   customers: [],
-  page: 1,
-  lastSearch: { offset: undefined, limit: undefined, search: undefined},
-  customerDetails: {
-    id: undefined,
-    fullName: undefined,
-    customer_events: [],
-    eventsBySourceCounts: {
-      meiro_events: 0,
-      mailchimp: 0,
-      prestashop:0
-    },
-    eventCountByCategoryDay: {},
-    eventsByDate: {},
-    timelineDates: []
-  },
-  groupStatus: {}
+  isError: false,
+  errorMessage: '',
+  dialogOpen: false,
+  fetchingData: false,
+  upTo: 5
 };
 
 function reducer(state, action) {
@@ -35,12 +24,12 @@ function reducer(state, action) {
     return saveToStoreReducer(action.data, state);
   case ATYPES.GET_SEARCH_RESULTS:
     return getSearchResultsReducer(action.data, state);
-  case ATYPES.GET_EVENT_DETAILS:
-    return getEventDetailsReducer(action.data, state);
-  case ATYPES.TOGGLE_GROUP:
-    return toggleGroupReducer(action.data, state);
-  case ATYPES.CHANGE_PAGE:
-    return changePageReducer(action.data, state);
+  case ATYPES.SHOW_MORE_DATA:
+    return showMoreDataReducer(action.data, state);
+  case ATYPES.UPDATE_FETCHING_STATUS:
+    return updateFetchingStatusReducer(action.data, state);
+  case ATYPES.CLOSE_DIALOG:
+    return closeDialogReducer( state);
   default:
     return state;
   }

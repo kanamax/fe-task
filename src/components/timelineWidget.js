@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid  } from '@material-ui/core';
-import imageBank from '../../assets/imageBank';
 
 const useStyles = makeStyles({
   rootGrid: {
@@ -30,13 +29,13 @@ export default function TimelineWidget(props) {
       <Grid item>
         <img
           alt="event_icon"
-          src={imageBank[widgetData.source_id]}
+          src={`../../assets/source_logos/${widgetData.source_id}.png`}
           className={classes.myImg}
         />
       </Grid>
       <Grid item container direction="column" className={classes.myLabel} alignItems="flex-start" justify="center">
         <Grid item className={classes.eventName}>{`${widgetData.count}x ${widgetData.short_title}`}</Grid>
-        <Grid item className={classes.eventCategory}>{widgetData.source}</Grid>
+        <Grid item className={classes.eventCategory}>{widgetData.source_name}</Grid>
       </Grid>
     </Grid>
   )

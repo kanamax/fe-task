@@ -24,56 +24,55 @@ export function getSearchResultsError(data) {
   };
 }
 
+export function updateFetchingStatus(data) {
+  return {
+    type: ATYPES.UPDATE_FETCHING_STATUS,
+    data
+  };
+}
+
 export function getSearchResults(data) {
   let target = '';
-  if(data.includes('offset') || data.includes('limit') || data === '' ) {
-    target = `${apiLink}/customers?${data}`
+  const { id } = data;
+  if(data.id === '') {
+    target = `${apiLink}/customers`
   } else {
-    target = `${apiLink}/customers/${data}`
+    target = `${apiLink}/customers/${id}` 
   }
   return (dispatch) => {
-    return Axios.get(target)
-      .then((response) => {
-        let dataToSend = {}
-        if(data.includes('offset') || data.includes('limit') || data === '') {
-          dataToSend = { ... response.data};
-        } else {
-          dataToSend.customers = [response.data.customer];
-          dataToSend.selection_settings = {id: data};
-        };
-        dispatch(getSearchResultsSuccess(dataToSend));
-      })
-      .catch(() => { dispatch(getSearchResultsError({ customers: [], selection_settings: {}})); });
+    dispatch(updateFetchingStatus(true));
+    setTimeout(() => {  
+      return Axios.get(target)
+        .then((response) => {
+          let dataToSend = {}
+          if(data.id === '') {
+            dataToSend = { customers: response.data.customers, isError: false };
+          } else {
+            dataToSend = { customers: [response.data.customer], isError: false };
+          };
+          dispatch(getSearchResultsSuccess(dataToSend));
+        })
+        .catch((err) => { 
+          dispatch(getSearchResultsError({
+            customers: [], 
+            isError: true, 
+            errorMessage: err.response.data.message
+          }
+          )); 
+      	});
+    }, 1000);
   };
 }
 
-export function getEventDetailsSuccess(data) {
+export function showMoreData(data) {
   return {
-    type: ATYPES.GET_EVENT_DETAILS,
+    type: ATYPES.SHOW_MORE_DATA,
     data
   };
 }
 
-export function getEventDetails(data) {
-  return (dispatch) => {
-    return Axios.get(`${apiLink}/customers/${data.id}/events`)
-      .then((response) => {
-        dispatch(getEventDetailsSuccess({ ... data , customer_events: response.data.customer_events }));
-      })
-      .catch((err) => { throw (err); });
-  };
-}
-
-export function toggleGroup(data) {
+export function closeDialog() {
   return {
-    type: ATYPES.TOGGLE_GROUP,
-    data
-  };
-}
-
-export function changePage(data) {
-  return {
-    type: ATYPES.CHANGE_PAGE,
-    data
+    type: ATYPES.CLOSE_DIALOG
   };
 }

@@ -10,11 +10,10 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons'
 const useStyles = makeStyles({
   myPaper: {
     backgroundColor: 'rgb(245, 245, 245)',
-    borderRadius: '8px'
-  },
-  gridRroot: {
-    paddingTop: '1rem',
-    paddingBottom: '1.5rem'
+    borderRadius: '8px',
+    border: '1px solid transparrent',
+    padding: '0.5rem',
+    marginBottom: '1px'
   },
   searchLabel: {
     fontSize: '1.5rem',
@@ -26,11 +25,6 @@ const useStyles = makeStyles({
     padding: '0.75rem',
     color: 'white',
     fontSize: '1.5rem'
-  },
-  myAdornment: {
-    width: '3.2rem',
-    height: '3.2rem',
-    color: 'rgb(171, 91, 12)'
   },
   inputRoot: {
     paddingRight: '0.25rem'
@@ -55,9 +49,8 @@ export default function SearchBar(props) {
             fullWidth
             type="text"
             value={searchString}
-            helperText="Keep empty to get all customers or use HTTP search string (e.g. offset=5&limit=7) or customer ID"
             onChange={(e) => saveToStore(e.target.value)}
-            onKeyPress={(e) => saveToStore(e.target.value)}
+            onKeyPress={(e) => {if (e.key === 'Enter') { getSearchResults({ id: searchString }) } }}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -65,7 +58,7 @@ export default function SearchBar(props) {
                     <FontAwesomeIcon
                       icon={faSearch}
                       className={classes.iconRoot}
-                      onClick={() => getSearchResults(searchString)} 
+                      onClick={() => getSearchResults({ id: searchString })} 
                     />
                   </Button>
                 </InputAdornment>
