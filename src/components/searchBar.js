@@ -36,7 +36,7 @@ const useStyles = makeStyles({
 
 export default function SearchBar(props) {
   const classes = useStyles();
-  const { getSearchResults, saveToStore, searchString } = props;
+  const { getSearchResults, saveToStore, searchString, history } = props;
   return (
     <Paper className={classes.myPaper}>
       <Grid container spacing={4} alignItems="center" justify="space-around" className={classes.gridRoot}>
@@ -50,7 +50,12 @@ export default function SearchBar(props) {
             type="text"
             value={searchString}
             onChange={(e) => saveToStore(e.target.value)}
-            onKeyPress={(e) => {if (e.key === 'Enter') { getSearchResults({ id: searchString }) } }}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                getSearchResults({ query: searchString });
+                history.push(`/search/${searchString}`)
+              } 
+            }}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -58,7 +63,10 @@ export default function SearchBar(props) {
                     <FontAwesomeIcon
                       icon={faSearch}
                       className={classes.iconRoot}
-                      onClick={() => getSearchResults({ id: searchString })} 
+                      onClick={() => {
+                        history.push(`/search/${searchString}`)
+                        getSearchResults({ query: searchString });
+                      }}
                     />
                   </Button>
                 </InputAdornment>
@@ -76,5 +84,6 @@ export default function SearchBar(props) {
 SearchBar.propTypes = {
   getSearchResults: PropTypes.func.isRequired,
   saveToStore: PropTypes.func.isRequired,
-  searchString: PropTypes.string.isRequired
+  searchString: PropTypes.string.isRequired,
+  history: PropTypes.object.isRequired
 }

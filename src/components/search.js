@@ -10,15 +10,33 @@ import CustomerDialog from './customerDialog';
 
 class Search extends React.Component {
 
+  componentDidMount(){
+    const { location, getSearchResults, match } = this.props;
+    if(location.search !== '') {
+      getSearchResults({ query: location.search });
+    }
+    if(match.params.id !== '' && match.params.id !== undefined) {
+      getSearchResults({ query: match.params.id });
+    }
+  }
+
+  componentDidUpdate (prevProps) {
+    const { location, getSearchResults } = this.props;
+    if(prevProps.location.search !== location.search) {
+      getSearchResults({ query: location.search });
+    }
+  }
+
   render() {
     const { getSearchResults, saveToStore, searchString, customers, showMoreData, upTo } = this.props;
-    const { fetchingData, errorMessage, closeDialog, dialogOpen } = this.props;
+    const { fetchingData, errorMessage, closeDialog, dialogOpen, history } = this.props;
     return (
       <div>
         <SearchBar 
           getSearchResults={getSearchResults}
           saveToStore={saveToStore}
           searchString={searchString}
+          history={history}
         />
         { customers.length > 0 ? (
           <SearchResultsTable 
@@ -44,7 +62,10 @@ Search.propTypes = {
   upTo: PropTypes.number.isRequired,
   fetchingData: PropTypes.bool.isRequired,
   dialogOpen: PropTypes.bool.isRequired,
-  errorMessage: PropTypes.string.isRequired
+  errorMessage: PropTypes.string.isRequired,
+  location: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
+  match: PropTypes.object.isRequired
 }
 
 export default withRouter(Search);

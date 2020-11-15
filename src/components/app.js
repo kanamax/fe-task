@@ -32,7 +32,7 @@ class App extends React.Component {
           />
           <Route 
             exact
-            path="/search"
+            path={["/search", "/search/:id"]}
             render={() => {
               return (
                 <Search 

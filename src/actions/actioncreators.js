@@ -32,20 +32,20 @@ export function updateFetchingStatus(data) {
 }
 
 export function getSearchResults(data) {
-  let target = '';
-  const { id } = data;
-  if(data.id === '') {
-    target = `${apiLink}/customers`
-  } else {
-    target = `${apiLink}/customers/${id}` 
-  }
+
+  const { query } = data;
+  console.log(query);
+  console.log(`${apiLink}/customers/${query}`)
+
+
   return (dispatch) => {
     dispatch(updateFetchingStatus(true));
     setTimeout(() => {  
-      return Axios.get(target)
+      return Axios.get(`${apiLink}/customers/${query}`)
         .then((response) => {
+          console.log(response)
           let dataToSend = {}
-          if(data.id === '') {
+          if(data.query === '' || data.query.includes('limit') || data.query.includes('offset') ) {
             dataToSend = { customers: response.data.customers, isError: false };
           } else {
             dataToSend = { customers: [response.data.customer], isError: false };

@@ -73,7 +73,7 @@ class SearchResultsTable extends React.Component{
                   <img
                     alt="customer_avatar"
                     className={classes.avatar}
-                    src={`../../assets/customer_avatars/Avatar-${i}.svg`}
+                    src={`../../assets/customer_avatars/Avatar-${i % 17}.svg`}
                   />
                 </TableCell>
                 <TableCell className={classes.blackColor}>{`Customer ${row.id}`}</TableCell>
